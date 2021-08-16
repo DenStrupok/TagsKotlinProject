@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/listItemFragment">
+
+    <fragment
+        android:id="@+id/listItemFragment"
+        android:name="com.example.tagskotlinproject.ui.listitem.ListItemFragment"
+        android:label="RequestFragment"
+        tools:layout="@layout/fragment_list_item"/>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.tagskotlinproject.ui.detail.DetailFragment"
+        android:label="DetailFragment"
+        tools:layout="@layout/fragment_detail"/>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.tagskotlinproject.MainActivity"
+        android:label="MainActivity"
+        tools:layout="@layout/activity_main"/>
+</navigation>

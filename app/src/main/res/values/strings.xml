@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TagsKotlinProject</string>
+    <string name="what_you_find">What you find</string>
+    <string name="please_enter_tag">Please enter tag</string>
+</resources>
