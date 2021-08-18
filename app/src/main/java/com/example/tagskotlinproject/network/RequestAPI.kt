@@ -17,6 +17,6 @@ interface RequestAPI {
 
     @GET("/api/v1/oauth2/browse/tags?")
     fun getTags(@Query("tag") tag: String,
-                @Query("limit") limit:Int,
+                @Query("offset") offset:Int,
                 @Query("token") access_token: String): Call<TagModel>
 }

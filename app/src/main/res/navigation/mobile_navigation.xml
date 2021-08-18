@@ -12,9 +12,9 @@
         tools:layout="@layout/fragment_list_item"/>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.example.tagskotlinproject.ui.detail.DetailFragment"
+        android:name="com.example.tagskotlinproject.ui.detail_item.DetailItemFragment"
         android:label="DetailFragment"
-        tools:layout="@layout/fragment_detail"/>
+        tools:layout="@layout/fragment_detail_item"/>
     <activity
         android:id="@+id/mainActivity"
         android:name="com.example.tagskotlinproject.MainActivity"

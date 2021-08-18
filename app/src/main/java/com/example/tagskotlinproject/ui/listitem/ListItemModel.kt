@@ -28,7 +28,6 @@ class ListItemModel(val baseContext: Context, val listener: ListItemResult) {
 
     private lateinit var sPref: SharedPreferences
     private val client_secret = "5386178afd24088be2380963cc467e8a"
-    private var pageSize = 10
 
 
     fun getAccessToken() {
@@ -58,19 +57,19 @@ class ListItemModel(val baseContext: Context, val listener: ListItemResult) {
     }
 
 
-    fun userRequest(request: String, requestCount: Int) {
-        pageSize *= requestCount
+    fun userRequest(request: String, offset: Int) {
         val tokenAccess: String? = sPref.getString(ACCESS_TOKEN, "")
         val retrofit = Retrofit.Builder().baseUrl("https://www.deviantart.com")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         val api = retrofit.create(RequestAPI::class.java)
-        val requestModel = api.getTags(request, pageSize, tokenAccess.toString())
+        val requestModel = api.getTags(request, offset, tokenAccess.toString())
         requestModel.enqueue(object : Callback<TagModel> {
             override fun onResponse(call: Call<TagModel>, response: Response<TagModel>) {
                 try {
-                    response.body() != null
-                    listener.receivedListItems(response)
+                    if (response.body() != null){
+                        listener.receivedListItems(response)
+                    }
                 } catch (e: Exception) {
                     Toast.makeText(baseContext, "All images loaded", android.widget.Toast.LENGTH_LONG).show()
                 }

@@ -14,8 +14,8 @@ import retrofit2.Response
 class ListItemViewModel(application: Application) : AndroidViewModel(application), ListItemResult {
     private val model = ListItemModel(application.baseContext, this)
 
-    fun userRequest(request: String, requestCount: Int) {
-        model.userRequest(request, requestCount)
+    fun userRequest(request: String, offset: Int) {
+        model.userRequest(request, offset)
     }
 
     fun getAccessToken(){

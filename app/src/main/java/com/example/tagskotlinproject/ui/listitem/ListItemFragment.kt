@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +11,19 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tagskotlinproject.MainActivity.Companion.MY_TAG
 import com.example.tagskotlinproject.R
 import com.example.tagskotlinproject.interfaces.ItemCLickRecyclerView
+import com.example.tagskotlinproject.pojo.DetailItem
 import com.example.tagskotlinproject.pojo.Results
+import com.example.tagskotlinproject.utils.DetailItemDialog
+import com.example.tagskotlinproject.utils.DetailItemDialog.Companion.DETAIL_ITEM_INFO
 import com.google.android.material.textfield.TextInputLayout
 
 class ListItemFragment : Fragment(), ItemCLickRecyclerView {
@@ -30,9 +33,8 @@ class ListItemFragment : Fragment(), ItemCLickRecyclerView {
     private val listItemAdapter = ListItemAdapter(this)
     private lateinit var tvInfoEnterTag: TextView
     private lateinit var listItemViewModel: ListItemViewModel
-    private var lastVisibilityItem: Int = 1
-    private var requestCount: Int = 1
-
+    private var offset: Int = 0
+    private lateinit var navController: NavController
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -43,15 +45,16 @@ class ListItemFragment : Fragment(), ItemCLickRecyclerView {
         edUserRequest.editText?.addTextChangedListener(textWatcher)
         tvInfoEnterTag = view.findViewById(R.id.tvInfoEnterTag)
         tvInfoEnterTag.visibility = View.VISIBLE
+        navController = Navigation.findNavController(requireActivity(), R.id.navHostFragment)
         val itemRecycler: RecyclerView = view.findViewById(R.id.itemRecycler)
         itemRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        itemRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+        itemRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE){
-                    requestCount++
-                     listItemViewModel.userRequest(edUserRequest.editText?.text.toString(), requestCount)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    offset++
+                    listItemViewModel.userRequest(edUserRequest.editText?.text.toString(), offset)
                 }
             }
         })
@@ -71,16 +74,15 @@ class ListItemFragment : Fragment(), ItemCLickRecyclerView {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            if (edUserRequest.editText?.text?.length!! > 0) {
+            if (edUserRequest.editText?.text?.length!! > 2) {
                 tvInfoEnterTag.visibility = View.GONE
-                listItemViewModel.userRequest(edUserRequest.editText?.text.toString(), requestCount)
+                listItemViewModel.userRequest(edUserRequest.editText?.text.toString(), offset)
 //                if (request!!.length > 2) {
 //                    hideKeyboard(requireContext())
 //                }
             }
             if (edUserRequest.editText?.text?.length == 0) {
                 tvInfoEnterTag.visibility = View.VISIBLE
-
             }
         }
 
@@ -99,9 +101,19 @@ class ListItemFragment : Fragment(), ItemCLickRecyclerView {
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-    override fun itemClicked(click: Results) {
-        Toast.makeText(requireContext(), "Clicked", Toast.LENGTH_LONG).show()
+    override fun itemClicked(clickedItem: Results) {
+        val image = clickedItem.preview?.src
+        val author = clickedItem.author?.username
+        val favorites = clickedItem.stats?.favourites
+        val comments = clickedItem.stats?.comments
+
+        val detailItem = DetailItem(image!!, author!!, favorites!!, comments!!)
+        val detailItemDialog = DetailItemDialog()
+        val bundle = Bundle()
+        bundle.putParcelable(DETAIL_ITEM_INFO, detailItem)
+        fragmentManager?.let {
+            detailItemDialog.arguments = bundle
+            detailItemDialog.show(it, "detail fragment dialog")
+        }
     }
-
-
 }

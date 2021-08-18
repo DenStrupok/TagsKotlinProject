@@ -12,13 +12,17 @@ import com.example.tagskotlinproject.R
 import com.example.tagskotlinproject.interfaces.ItemCLickRecyclerView
 import com.example.tagskotlinproject.pojo.Results
 
-class ListItemAdapter(val listener: ItemCLickRecyclerView) : RecyclerView.Adapter<ListItemAdapter.ViewHolder>() {
+class ListItemAdapter(private val listener: ItemCLickRecyclerView) : RecyclerView.Adapter<ListItemAdapter.ViewHolder>() {
 
 
 
     private var listResult = mutableListOf<Results>()
+
     fun sendListResult(listItems: MutableList<Results>) {
-        this.listResult = listItems
+        this.listResult.addAll(listItems)
+        if (listItems.isEmpty()){
+            listResult.removeAll(listResult)
+        }
         notifyDataSetChanged()
     }
 
@@ -32,8 +36,7 @@ class ListItemAdapter(val listener: ItemCLickRecyclerView) : RecyclerView.Adapte
         holder.tvAuthor.text = listResult[position].author?.username
         Glide.with(holder.imgPicture).load(listResult[position].preview?.src).into(holder.imgPicture)
         holder.itemCLickRV.setOnClickListener {
-            val click = listResult[position]
-            listener.itemClicked(click)
+            listener.itemClicked(listResult[position])
         }
     }
 
